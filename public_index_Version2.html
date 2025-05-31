@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Event Voting App</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .votes { margin-top: 20px; }
+    button { padding: 10px 20px; margin: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Event Voting App</h1>
+  <button onclick="castVote('yes')">Yes</button>
+  <button onclick="castVote('no')">No</button>
+  <div class="votes">
+    <p>Yes Votes: <span id="yes-count">0</span></p>
+    <p>No Votes: <span id="no-count">0</span></p>
+  </div>
+  <script>
+    async function fetchVotes() {
+      const res = await fetch('/api/votes');
+      const data = await res.json();
+      document.getElementById('yes-count').textContent = data.yes;
+      document.getElementById('no-count').textContent = data.no;
+    }
+
+    async function castVote(vote) {
+      await fetch('/api/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vote })
+      });
+      fetchVotes();
+    }
+
+    fetchVotes();
+  </script>
+</body>
+</html>
